@@ -13,6 +13,7 @@ const path = require('path');
 
 
 function start(targetUrl,options,header){
+
 	superagent
 		.post(targetUrl)
 		.type('form')
@@ -95,7 +96,7 @@ exports.spiderGo = () => {
 		kd:'web前端'
 	}
 	
-	var i=2;
+	var i=25;
 	
 	var header = {
 		'Content-Type':'application/x-www-form-urlencoded',
@@ -107,7 +108,8 @@ exports.spiderGo = () => {
 		
 		if(i<30) {
 			i++;
-			options.pn=i;	
+			options.pn=i;
+			console.log(i)
 			start(targetUrl,options,header);
 			setTimeout(timer,5000);
 		}
