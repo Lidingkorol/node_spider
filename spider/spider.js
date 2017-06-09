@@ -38,7 +38,7 @@ function start(targetUrl,options,header){
 				
 				result = JSON.stringify(result)
 				
-				fs.appendFileSync(path.join(__dirname,'data.js'),result,function(err){
+				fs.appendFileSync(path.join(__dirname,'sz_data.js'),result,function(err){
 		  			
 		  			if(err) throw err;
 
