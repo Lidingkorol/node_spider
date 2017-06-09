@@ -92,7 +92,7 @@ exports.spiderGo = () => {
 			i++;
 			options.pn=i;	
 			start(targetUrl,options);
-			setTimeout(timer,2000);
+			setTimeout(timer,5000);
 		}
 		else {
 			
