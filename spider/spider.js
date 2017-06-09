@@ -20,37 +20,43 @@ function start(targetUrl,options){
 		.send(options)
 		.end(function(err,res){
 			
-			if(err) {
-				return false;
+			let reData = JSON.parse(res.text)
+				
+			try{
+				
+				if(reData.success==false) {
+					
+					console.log(false)
+					
+					return false;
+					
+				}	
+				
+				let result = reData.content.positionResult.result
+				
+				result = JSON.stringify(result)
+				
+				fs.appendFileSync(path.join(__dirname,'data.js'),result,function(err){
+		  			
+		  			if(err) throw err;
+
+		  			console.log(2)
+
+		  		})
+			
+			}catch(e){
+				
+				
+				console.log(e)
+				
+				
 			}
 			
-			if(res.success==false){
-				return  false;
-			}
-			
-			console.log(res.text)
-			
-			let jsData = JSON.parse(res.text)
-			
-			console.log(jsData.content.positionResult.result)
-			
-			let result = jsData.content.positionResult.result
-			
-			result = JSON.stringify(result)
-			
-			fs.appendFileSync(path.join(__dirname,'data.js'),result,function(err){
-	  			
-	  			if(err) throw err;
-	  			
-	  			
-	  		
-	  			console.log(2)
-	  			
-	  			
-	  			
-	  		})
 			
 			
+			
+			
+/*			
 			
 			
 			
@@ -71,6 +77,9 @@ function start(targetUrl,options){
 	  			console.log(1)
 	  			
 	  		})
+
+*/
+
 		})
 }
 
