@@ -12,11 +12,11 @@ const fs = require('fs');
 const path = require('path');
 
 
-function start(targetUrl,options){
+function start(targetUrl,options,header){
 	superagent
 		.post(targetUrl)
 		.type('form')
-		.set('Content-Type', 'application/x-www-form-urlencoded')
+		.set(header)
 		.send(options)
 		.end(function(err,res){
 			
@@ -31,6 +31,8 @@ function start(targetUrl,options){
 					return false;
 					
 				}	
+				
+				console.log('ok')
 				
 				let result = reData.content.positionResult.result
 				
@@ -95,12 +97,18 @@ exports.spiderGo = () => {
 	
 	var i=2;
 	
+	var header = {
+		'Content-Type':'application/x-www-form-urlencoded',
+		'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+	}
+	
+	
 	function timer() {
 		
 		if(i<30) {
 			i++;
 			options.pn=i;	
-			start(targetUrl,options);
+			start(targetUrl,options,header);
 			setTimeout(timer,5000);
 		}
 		else {
