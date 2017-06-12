@@ -11,6 +11,12 @@ const fs = require('fs');
 
 const path = require('path');
 
+const async = require('async');
+
+var browser = require('./conf');
+
+
+
 
 function start(targetUrl,options,header){
 
@@ -35,13 +41,21 @@ function start(targetUrl,options,header){
 				
 				console.log('ok')
 				
-				let result = reData.content.positionResult.result						
+				let result = reData.content.positionResult.result		
 				
-				for(let i=0;i<result.length;i++) {			
+				var map = Array.prototype.map;
+				
+				let urlArr = map.call(result,function(x){return x.positionId})
+				
+				async.map(urlArr,function(item,callback){
+					details(item)
 					
-					console.log(details(result[i].positionId))
-					
-				}
+				},function(err,result){
+					console.log(err)
+					console.log(result)
+				})
+				
+				
 				
 				result = JSON.stringify(result)
 				
@@ -113,37 +127,38 @@ async function details(pId) {
 		'Accept-Encoding' : 'gzip, deflate, br'
 	}
 	
+	tHeader['User-Agent'] = browser[Math.round(Math.random()*9)];
+	
 	let pIdUrl = 'https://www.lagou.com/jobs/' +pId+ '.html';
 	
 	var tHtml;
 	
-	console.log(pIdUrl)
+	
+	/*console.log(pIdUrl)*/
 
 	function htp(pIdUrl) {
-		let tRes;
+		
 		superagent
 			.get(pIdUrl)
 			.set(tHeader)
 			.end(function(err,res){
 							
 				let $ = cheerio.load(res.text,{decodeEntities: false})	
+				
+				let tRes;
 								
 				$('.job_bt p').each(function (idx, element) {
 					
 					tRes += $(element).html();
 					
+					/*console.log(tRes)*/
+					
 		  		});
 				
 			})	
-		
-		console.log(tRes)
-		
-		return tRes
 	}
 		
 	tHtml = await htp(pIdUrl);	
-	
-	console.log(htp(pIdUrl))
 	
 	return tHtml;
 }
@@ -174,20 +189,6 @@ exports.spiderGo = () => {
 		Accept : 'application/json, text/javascript, */*; q=0.01',
 		'Accept-Encoding' : 'gzip, deflate, br'
 	}
-	
-	
-	var browser = [
-		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
-		'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0',
-		'Opera/8.0 (Windows NT 5.1; U; en)',
-		'Safari/537.36 OPR/26.0.1656.60',
-		'Mozilla/5.0 (X11; U; Linux x86_64; zh-CN; rv:1.9.2.10) Gecko/20100922 Ubuntu/10.10 (maverick) Firefox/3.6.10',
-		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.57.2 (KHTML, like Gecko) Version/5.1.7 ',
-		'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-		'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
-		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.11 ',
-		'TaoBrowser/2.0 Safari/536.11'
-	]
 	
 	var i=2;
 	
