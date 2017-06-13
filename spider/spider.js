@@ -41,14 +41,30 @@ function start(targetUrl,options,header){
 				
 				console.log('ok')
 				
-				let result = reData.content.positionResult.result		
+				let resultData = reData.content.positionResult.result;		
 				
 				var map = Array.prototype.map;
 				
-				let urlArr = map.call(result,function(x){return x.positionId})
+				//过滤本科
+				function checkEdu(edu) {
+				    return edu.education == "专科"||edu.education == "大专";
+				}
 				
+				resultData = resultData.filter(checkEdu)
 				
+				let urlArr = map.call(resultData,function(x){return x.positionId})
 				
+				//薪金平均值
+				resultData = map.call(resultData,function(x){
+					let price = x.salary.split('-');
+					function getSum(total, num) {
+					    return Number(total.replace('k','')) + Number(num.replace('k',''));
+					}
+					x.aveSalary = price.reduce(getSum)/price.length;
+					
+					return x
+					
+				})
 				
 				async.mapLimit(urlArr,5,function(item,callback){
 					
@@ -58,27 +74,19 @@ function start(targetUrl,options,header){
 					/*console.log(err)*/
 					console.log('这里是结果')
 					console.log(result)
-				})
-				
-				
-				
-				result = JSON.stringify(result)
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				/*fs.appendFileSync(path.join(__dirname,'zzz_data.js'),result,function(err){
+					for(let i=0;i<result.length;i++) {
+						resultData[i].describe = result[i]
+					}
+					resultData = JSON.stringify(resultData)
+					
+					fs.appendFileSync(path.join(__dirname,'szdz_data.js'),resultData,function(err){
 		  			
-		  			if(err) throw err;
-
-		  			console.log(2)
-
-		  		})*/
+			  			if(err) throw err;
+	
+			  			console.log(2)
+	
+			  		})
+				})
 			
 			}catch(e){
 				
