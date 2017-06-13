@@ -47,11 +47,16 @@ function start(targetUrl,options,header){
 				
 				let urlArr = map.call(result,function(x){return x.positionId})
 				
-				async.map(urlArr,function(item,callback){
-					details(item)
+				
+				
+				
+				async.mapLimit(urlArr,5,function(item,callback){
+					
+					details(item,callback)
 					
 				},function(err,result){
-					console.log(err)
+					/*console.log(err)*/
+					console.log('这里是结果')
 					console.log(result)
 				})
 				
@@ -78,41 +83,13 @@ function start(targetUrl,options,header){
 				
 				
 			}
-			
-			
-			
-			
-			
-/*			
-			
-			
-			
-			var $ = cheerio.load(res.text)
-			
-			var data=[];
-		
-			$('.con_list_item').each(function (idx, element) {
-				
-				console.log($(element).attr('data-salary'))
-				
-	      	
-	  		});
-	  		fs.writeFile(path.join(__dirname,'data.js'),data,function(err){
-	  			
-	  			if(err) throw err;
-	  			
-	  			console.log(1)
-	  			
-	  		})
-
-*/
 
 		})
 		
 }
 
 
-async function details(pId) {
+async function details(pId,callback) {
 	
 	
 	let tReferer = 'https://www.lagou.com/jobs/list_web前端?city=深圳&cl=false&fromSearch=true&labelWords=&suginput='
@@ -131,36 +108,31 @@ async function details(pId) {
 	
 	let pIdUrl = 'https://www.lagou.com/jobs/' +pId+ '.html';
 	
-	var tHtml;
+	let tRes;
 	
 	
-	/*console.log(pIdUrl)*/
-
-	function htp(pIdUrl) {
-		
-		superagent
-			.get(pIdUrl)
-			.set(tHeader)
-			.end(function(err,res){
+	superagent
+		.get(pIdUrl)
+		.set(tHeader)
+		.end(function(err,res){
+						
+			let $ = cheerio.load(res.text,{decodeEntities: false})	
+			
 							
-				let $ = cheerio.load(res.text,{decodeEntities: false})	
+			$('.job_bt p').each(function (idx, element) {
 				
-				let tRes;
-								
-				$('.job_bt p').each(function (idx, element) {
-					
-					tRes += $(element).html();
-					
-					/*console.log(tRes)*/
-					
-		  		});
+				tRes += $(element).html();
 				
-			})	
-	}
+				
+	  		});
+	  		
+	  		
+			//console.log('这是第条,url为：'+pIdUrl+ '内容是:'+tRes)
+			
+			callback(null,tRes)
 		
-	tHtml = await htp(pIdUrl);	
-	
-	return tHtml;
+		})
+		
 }
 
 
