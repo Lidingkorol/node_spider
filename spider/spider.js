@@ -68,6 +68,10 @@ function start(targetUrl,options,header){
 				
 				
 				
+				
+				
+				
+				
 				/*fs.appendFileSync(path.join(__dirname,'zzz_data.js'),result,function(err){
 		  			
 		  			if(err) throw err;
