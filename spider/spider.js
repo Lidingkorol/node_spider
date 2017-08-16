@@ -52,6 +52,8 @@ function start(targetUrl,options,header){
 				
 				resultData = resultData.filter(checkEdu)
 				
+				
+				//获取子页面id
 				let urlArr = map.call(resultData,function(x){return x.positionId})
 				
 				//薪金平均值
@@ -66,6 +68,8 @@ function start(targetUrl,options,header){
 					
 				})
 				
+				
+				//限制并发数量
 				async.mapLimit(urlArr,5,function(item,callback){
 					
 					details(item,callback)
